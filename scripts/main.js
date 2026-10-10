@@ -164,5 +164,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ============================================
+    // Client-Side Security & Content Protection
+    // ============================================
+    // Disable right-click context menu (prevents "Inspect", "Save As", "View Source")
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+
+    // Disable keyboard shortcuts for DevTools, View Source, and Page Saving
+    document.addEventListener('keydown', (e) => {
+        // F12 (DevTools)
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+
+        const isCtrlOrCmd = e.ctrlKey || e.metaKey;
+
+        if (isCtrlOrCmd) {
+            const key = (e.key || '').toLowerCase();
+
+            // Ctrl+U (View Page Source)
+            // Ctrl+S (Save Page)
+            // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C (Developer Tools / Inspect)
+            if (
+                key === 'u' ||
+                key === 's' ||
+                (e.shiftKey && (key === 'i' || key === 'j' || key === 'c'))
+            ) {
+                e.preventDefault();
+                return false;
+            }
+
+            // Prevent Ctrl+C / Ctrl+A / Ctrl+X outside of editable input/textarea fields
+            const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            if (targetTag !== 'input' && targetTag !== 'textarea') {
+                if (key === 'c' || key === 'a' || key === 'x') {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        }
+    });
+
+    // Disable dragging images and text
+    document.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+        return false;
+    });
+
+    // Disable copying outside of form inputs
+    document.addEventListener('copy', (e) => {
+        const targetTag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+        if (targetTag !== 'input' && targetTag !== 'textarea') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
     console.log('Portfolio website loaded successfully! 🚀');
 });
